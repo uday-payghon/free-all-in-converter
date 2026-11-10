@@ -110,3 +110,8 @@
 
 /* Keep the theme switch visible without horizontal overflow on narrow phones */
 @media(max-width:600px){.site-header .nav-cta{display:none}.site-header .header-inner{gap:10px}.site-header .brand{min-width:0}}
+
+/* Accessibility hotfix: text contrast and modal priority over success notification */
+.partner-inner p{color:#55555d}
+:root[data-theme="dark"] .partner-inner p{color:#c8c8d0}
+.modal{z-index:120}
