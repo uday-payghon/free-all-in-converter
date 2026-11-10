@@ -44,3 +44,7 @@ Repository: https://github.com/uday-payghon/free-all-in-converter
 Public smoke gate passed: PNG→JPG 564 bytes; PDF→DOCX 36,597 bytes; PDF→PDF 1,375 bytes; DOCX→PDF 12,090 bytes; MP4→MP3 21,986 bytes; MP4→WebM 16,607 bytes. Output parsers/decoders, attachment headers, actual bytes, homepage, capabilities and malformed-file error all passed with TLS verification enabled.
 
 Initial remote CI passed backend, dependency audit, production Docker build and HTTP smoke but failed browser installation because `ubuntu-latest` resolved to Ubuntu 26.04 unsupported by this Playwright version. Pinned CI to Ubuntu 24.04. Raw CDP touch drag followed immediately by a tap suppressed Chromium's click; added image decode wait and a 400 ms gesture boundary. Three repeated touch tests then passed.
+
+Public Chromium regression: **10/10 passed in 1.0 minute**, covering all five categories, attachment downloads, image pixel checks, keyboard crop, pointer crop, mobile touch crop, size impossibility, scanned-PDF OCR message, category focus trap, responsive widths and axe checks. The final local touch gesture test also passed 3/3 consecutive runs.
+
+Remote browser CI passed 27 checks but exposed suppression of the Apply tap when mixing raw CDP touch IDs with Playwright's separate touchscreen controller. The touch test now verifies the actual touch rectangle, then activates Apply through the keyboard. Pointer and ordinary UI activation remain covered independently. The fix changes only the test driver, not deployed conversion behavior.
