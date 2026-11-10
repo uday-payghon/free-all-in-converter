@@ -329,3 +329,6 @@
   .size-card-heading strong{font-size:10px}
   .footer-inner{padding:18px 0;line-height:1.55}
 }
+
+/* Keep the source of the early-community figure readable on narrow phones */
+@media(max-width:480px){.hero-stat-community small{display:block;font-size:10px;line-height:1.4;margin-top:1px}}
