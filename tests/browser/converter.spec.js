@@ -137,3 +137,37 @@ test('reference-inspired hero keeps its information and theme on mobile',async({
   await expect(page.locator('.hero-stat-card')).toHaveCount(3);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
+
+test('developer profile stays visible and hero preview does not clip at right edge',async({page})=>{
+  await page.goto('/');
+  await expect(page.locator('.developer-credit')).toContainText('Developed by:');
+  await expect(page.locator('.developer-credit')).toContainText('Uday Payghon');
+  const contact=page.locator('.developer-profile .developer-contact');
+  await expect(contact).toBeVisible();
+  await expect(contact).toHaveAttribute('href', /linkedin\\.com\\/in\\/cyber-uday/);
+  for(const width of [320,390,600,768,1024,1280,1440]){
+    await page.setViewportSize({width,height:900});
+    const positions=await page.evaluate(()=>{
+      const viewport=window.innerWidth;
+      const hero=document.querySelector('.hero-right').getBoundingClientRect();
+      const preview=document.querySelector('.preview-window').getBoundingClientRect();
+      const developer=document.querySelector('.developer-profile').getBoundingClientRect();
+      const contact=document.querySelector('.developer-contact').getBoundingClientRect();
+      return {viewport,documentWidth:document.documentElement.scrollWidth,
+        heroLeft:hero.left,heroRight:hero.right,
+        previewLeft:preview.left,previewRight:preview.right,
+        developerLeft:developer.left,developerRight:developer.right,contactRight:contact.right};
+    });
+    expect(positions.documentWidth).toBeLessThanOrEqual(width);
+    expect(positions.heroLeft).toBeGreaterThanOrEqual(-1);
+    expect(positions.heroRight).toBeLessThanOrEqual(width+1);
+    expect(positions.previewLeft).toBeGreaterThanOrEqual(positions.heroLeft-1);
+    expect(positions.previewRight).toBeLessThanOrEqual(positions.heroRight+1);
+    expect(positions.developerLeft).toBeGreaterThanOrEqual(-1);
+    expect(positions.contactRight).toBeLessThanOrEqual(width+1);
+  }
+  await page.locator('#theme-toggle').click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
+  await expect(contact).toBeVisible();
+  await audit(page);
+});
