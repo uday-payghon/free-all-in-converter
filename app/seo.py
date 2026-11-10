@@ -26,7 +26,9 @@ def tool_page(slug):
     metadata = json.dumps({"@context":"https://schema.org","@type":"WebApplication",
                            "name":title,"url":url,"applicationCategory":"UtilitiesApplication",
                            "operatingSystem":"Any","isAccessibleForFree":True,
-                           "description":description},ensure_ascii=True).replace("<", "\\u003c")
+                           "description":description,
+                           "creator":[{"@type":"Person","name":"Uday Payghon"},
+                                      {"@type":"Person","name":"Manjushree Dighe"}]},ensure_ascii=True).replace("<", "\\u003c")
     title, description, instructions = map(escape, (title, description, instructions))
     return f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -42,7 +44,7 @@ def tool_page(slug):
 <main class="seo-tool-page page-width"><span class="section-label">FREE ONLINE CONVERTER</span>
 <h1>{title}</h1><p class="seo-lead">{description}</p><section class="seo-tool-card"><h2>How to use this converter</h2><p>{instructions}</p><a class="primary-btn" href="/?tool={category}&format={fmt}#workspace">Start converting ↗</a><p class="seo-tool-note">No registration, no watermark added, and direct download. Output-size targets are maximum limits, not guaranteed exact byte counts.</p></section>
 <section class="seo-more-tools"><h2>More conversion tools</h2><div class="discover-links">{''.join(f'<a href="/tools/{other}">{escape(info[0])} ↗</a>' for other,info in TOOLS.items() if other != slug)}</div></section></main>
-<footer class="site-footer"><div class="page-width footer-inner"><a href="/" class="footer-brand">Free All-in Converter</a><span>Developed by <strong>Mr. Uday Payghon</strong> · <a href="https://www.linkedin.com/in/cyber-uday/" rel="noopener noreferrer">Contact developer</a></span></div></footer>
+<footer class="site-footer"><div class="page-width footer-inner"><a href="/" class="footer-brand">Free All-in Converter</a><span>Developed by <strong>Uday Payghon &amp; Manjushree Dighe</strong> · <a href="https://www.linkedin.com/in/cyber-uday/" rel="noopener noreferrer">Contact developers</a></span></div></footer>
 </body></html>"""
 
 def sitemap():
