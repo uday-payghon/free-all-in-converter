@@ -219,3 +219,9 @@
 :root[data-theme="dark"] .mock-label{color:#c4c4cf}
 :root[data-theme="dark"] .pill-light{background:#482b33;color:#ffd0d4}
 :root[data-theme="dark"] .assurance-inner span{color:#e6e6ec}
+
+/* Explicit contrast for selectable conversion categories across browsers */
+:root[data-theme="dark"] .tool-strip .category-card{background-color:#202028;color:#f6f6f8;border-color:#4a4a54}
+:root[data-theme="dark"] .tool-strip .category-card>strong{color:#f9f9fb}
+:root[data-theme="dark"] .tool-strip .category-card>span:nth-of-type(2){color:#d2d2dc}
+:root[data-theme="dark"] .tool-strip .category-card:hover{background-color:#30252d}
