@@ -93,3 +93,17 @@
 :root[data-theme="dark"] .site-footer .footer-inner strong{color:#fff}
 :root[data-theme="dark"] .success-toast-check{background:#1b3c2d;color:#72e4a3}
 @media(prefers-color-scheme:dark){:root:not([data-theme]){color-scheme:dark}}
+
+/* Indexable, human-useful landing pages */
+.seo-tool-page{padding:74px 0 90px;max-width:1120px}
+.seo-tool-page h1{max-width:900px;margin:16px 0;font-size:clamp(36px,5vw,59px);line-height:1.12}
+.seo-lead{font-size:17px;max-width:760px;line-height:1.8;color:var(--sub);margin:0 0 32px}
+.seo-tool-card{max-width:780px;padding:30px;border:1px solid var(--line);background:var(--soft);border-radius:15px}
+.seo-tool-card h2{font-size:27px;letter-spacing:-.7px;margin:0 0 10px}
+.seo-tool-card p{font-size:14px;color:var(--sub);line-height:1.8;margin-bottom:20px}
+.seo-tool-card .primary-btn{text-align:center;display:inline-flex;width:max-content;max-width:100%}
+.seo-tool-card .seo-tool-note{font-size:12px;margin:19px 0 0}
+.seo-more-tools{margin-top:65px}
+.seo-more-tools h2{font-size:28px}
+:root[data-theme="dark"] .seo-tool-card{background:var(--soft);border-color:var(--line)}
+@media(max-width:720px){.seo-tool-page{padding:43px 0 60px}.seo-tool-card{padding:21px}.seo-tool-page h1{font-size:36px}}
