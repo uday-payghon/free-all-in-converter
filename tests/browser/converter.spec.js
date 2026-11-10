@@ -117,3 +117,23 @@ test('mobile touch crop',async({browser,browserName})=>{
   await page.locator('#apply-crop').focus();
   await page.keyboard.press('Enter');await expect(page.locator('#crop-summary')).toHaveText(/Crop: \d+ × \d+ px/);const cropText=await page.locator('#crop-summary').textContent();const cropSize=cropText.match(/(\d+) × (\d+)/);expect(cropSize).toBeTruthy();expect(Math.abs(Number(cropSize[1])-200)).toBeLessThanOrEqual(1);expect(Math.abs(Number(cropSize[2])-150)).toBeLessThanOrEqual(1);await context.close();
 });
+
+test('reference-inspired hero keeps its information and theme on mobile',async({page})=>{
+  await page.goto('/');
+  await expect(page.locator('.hero-kicker')).toContainText('Fast, simple online file converter');
+  await expect(page.locator('.hero h1')).toContainText('Convert Your Files');
+  await expect(page.locator('.hero-stat-card')).toHaveCount(3);
+  await expect(page.locator('.hero-stats')).toContainText('5');
+  await expect(page.locator('.hero-stats')).toContainText('10+');
+  await expect(page.locator('.hero-stats')).toContainText('0');
+  await audit(page);
+  await page.setViewportSize({width:390,height:844});
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await page.locator('#theme-toggle').click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
+  await audit(page);
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
+  await expect(page.locator('.hero-stat-card')).toHaveCount(3);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});
