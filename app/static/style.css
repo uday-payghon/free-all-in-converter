@@ -211,3 +211,11 @@
   .hero-right .preview-window{width:90%;transform:none}
   .hero-right .floating-format{display:none}
 }
+
+/* Accessible dark UI: preserve red identity with readable text across hero elements */
+:root[data-theme="dark"] .primary-btn{background:#b7192b;border-color:#b7192b;color:#fff}
+:root[data-theme="dark"] .primary-btn:hover{background:#9c1726;border-color:#9c1726}
+:root[data-theme="dark"] .preview-topbar{color:#d0d0d8}
+:root[data-theme="dark"] .mock-label{color:#c4c4cf}
+:root[data-theme="dark"] .pill-light{background:#482b33;color:#ffd0d4}
+:root[data-theme="dark"] .assurance-inner span{color:#e6e6ec}
