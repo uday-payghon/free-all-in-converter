@@ -1,0 +1,13 @@
+.git
+.venv
+__pycache__
+.pytest_cache
+*.pyc
+*.zip
+.DS_Store
+node_modules
+playwright-report
+test-results
+.env
+.env.*
+docs

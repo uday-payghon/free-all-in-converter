@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: free-all-in-converter
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: MAX_UPLOAD_MB
+        value: '40'
+      - key: MAX_JOBS
+        value: '1'
+      - key: MAX_PENDING_REQUESTS
+        value: '3'
+      - key: MAX_IMAGE_PIXELS
+        value: '16000000'
+      - key: CONVERSION_TIMEOUT
+        value: '240'
+      - key: WORKER_MEMORY_MB
+        value: '1024'
+      - key: RATE_LIMIT_PER_MINUTE
+        value: '12'

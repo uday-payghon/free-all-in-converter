@@ -1,0 +1,42 @@
+name: Test converter
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Build and test real converters
+        run: |
+          docker build --target test -t converter:test .
+          docker run --rm --memory=512m --cpus=1 --pids-limit=128 converter:test
+      - name: Audit runtime dependencies
+        run: docker run --rm --user root converter:test sh -c 'pip install -q pip-audit && pip-audit -r requirements.txt'
+      - name: Start production image
+        run: |
+          docker build --target production -t converter:production .
+          docker run -d --name converter --memory=512m --cpus=1 --pids-limit=128 --security-opt no-new-privileges --cap-drop ALL --read-only --tmpfs /tmp:rw,nosuid,size=256m --tmpfs /home/appuser:rw,nosuid,size=32m -p 127.0.0.1:10000:10000 -e RATE_LIMIT_PER_MINUTE=0 converter:production
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:10000/health && break; sleep 2; done
+      - name: Verify HTTP conversions and downloads
+        run: docker run --rm --network host converter:test python scripts/smoke.py http://127.0.0.1:10000
+      - name: Browser and accessibility tests
+        run: |
+          docker run --rm --user root -v "$PWD/artifacts:/fixtures" converter:test python scripts/fixtures.py /fixtures/fixtures
+          npm ci
+          npx playwright install --with-deps chromium firefox webkit
+          npm run test:browser
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-results
+          path: |
+            playwright-report/
+            test-results/

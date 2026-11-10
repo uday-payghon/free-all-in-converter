@@ -1,0 +1,23 @@
+{
+  "navigation": [
+    {
+      "domContentLoadedMs": 60.30000001192093,
+      "transferBytes": 5451
+    }
+  ],
+  "resources": [
+    {
+      "url": "http://127.0.0.1:10000/static/style.css",
+      "transferBytes": 5919
+    },
+    {
+      "url": "http://127.0.0.1:10000/static/app.js",
+      "transferBytes": 5874
+    },
+    {
+      "url": "http://127.0.0.1:10000/api/capabilities",
+      "transferBytes": 794
+    }
+  ],
+  "horizontalOverflow": false
+}
