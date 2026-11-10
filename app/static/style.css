@@ -332,3 +332,7 @@
 
 /* Keep the source of the early-community figure readable on narrow phones */
 @media(max-width:480px){.hero-stat-community small{display:block;font-size:10px;line-height:1.4;margin-top:1px}}
+
+/* Upload link has accessible contrast in mobile, desktop and both color schemes */
+.drop-zone u{color:#a71929;text-underline-offset:3px}
+:root[data-theme="dark"] .drop-zone u{color:#ff9ba5}
