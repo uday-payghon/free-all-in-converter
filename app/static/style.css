@@ -336,3 +336,6 @@
 /* Upload link has accessible contrast in mobile, desktop and both color schemes */
 .drop-zone u{color:#a71929;text-underline-offset:3px}
 :root[data-theme="dark"] .drop-zone u{color:#ff9ba5}
+
+/* Avoid transient unreadable text when switching between light and dark modes */
+.drop-zone{transition:border-color .2s,box-shadow .2s}
