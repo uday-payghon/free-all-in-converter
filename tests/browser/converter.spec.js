@@ -171,3 +171,61 @@ test('developer profile stays visible and hero preview does not clip at right ed
   await expect(contact).toBeVisible();
   await audit(page);
 });
+
+test('mobile-first experience credits both developers and keeps tools usable',async({page,browserName},testInfo)=>{
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/');
+  const credit=page.locator('.developer-credit');
+  await expect(credit).toContainText('Uday Payghon');
+  await expect(credit).toContainText('Manjushree Dighe');
+  await expect(page.locator('.hero-stat-community')).toContainText('150+');
+  await expect(page.locator('.hero-stat-community')).toContainText('Early community users');
+  await expect(page.locator('.site-footer')).toContainText('Uday Payghon');
+  await expect(page.locator('.site-footer')).toContainText('Manjushree Dighe');
+  await expect(page.locator('.hero-right')).toBeHidden();
+  await expect(page.locator('.developer-profile .developer-contact')).toBeVisible();
+  await expect(page.locator('.hero-actions .primary-btn')).toBeVisible();
+  for(const width of [320,375,390,430,600,720,768]){
+    await page.setViewportSize({width,height:844});
+    const dimensions=await page.evaluate(()=>{
+      const bounds=selector=>{const e=document.querySelector(selector);const r=e.getBoundingClientRect();return {left:r.left,right:r.right,width:r.width,top:r.top,bottom:r.bottom}};
+      return {scrollWidth:document.documentElement.scrollWidth,
+              viewportWidth:innerWidth,
+              header:bounds('.header-inner'),
+              credit:bounds('.developer-profile'),
+              contact:bounds('.developer-contact'),
+              start:bounds('.hero-actions .primary-btn'),
+              stats:bounds('.hero-stats'),
+              categories:bounds('.category-grid')};
+    });
+    expect(dimensions.scrollWidth, 'horizontal overflow at '+width+' px').toBeLessThanOrEqual(width);
+    for(const area of ['header','credit','contact','start','stats','categories']){
+      expect(dimensions[area].left,area+' left at '+width).toBeGreaterThanOrEqual(-1);
+      expect(dimensions[area].right,area+' right at '+width).toBeLessThanOrEqual(width+1);
+    }
+    expect(dimensions.start.width).toBeGreaterThanOrEqual(100);
+  }
+  await page.setViewportSize({width:390,height:844});
+  if(browserName==='chromium')await page.screenshot({path:testInfo.outputPath('mobile-home-light.png'),fullPage:true});
+  await page.locator('#tools [data-mode="image"]').click();
+  await expect(page.locator('#workspace')).toBeVisible();
+  await chooseImage(page);
+  await expect(page.locator('#crop-trigger-row')).toBeVisible();
+  await page.locator('#target').fill('200');
+  await expect(page.locator('#summary-target')).toContainText('200');
+  if(browserName==='chromium')await page.screenshot({path:testInfo.outputPath('mobile-image-workspace.png'),fullPage:true});
+  await audit(page);
+  await page.locator('#theme-toggle').click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
+  await audit(page);
+  if(browserName==='chromium')await page.screenshot({path:testInfo.outputPath('mobile-home-dark.png'),fullPage:true});
+});
+
+test('SEO converter page names both developers',async({page})=>{
+  await page.goto('/tools/png-to-jpg');
+  await expect(page.locator('.site-footer')).toContainText('Uday Payghon');
+  await expect(page.locator('.site-footer')).toContainText('Manjushree Dighe');
+  const json=await page.locator('script[type="application/ld+json"]').textContent();
+  const metadata=JSON.parse(json);
+  expect(metadata.creator.map(person=>person.name)).toEqual(['Uday Payghon','Manjushree Dighe']);
+});
