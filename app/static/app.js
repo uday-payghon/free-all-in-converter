@@ -1,5 +1,27 @@
 'use strict';
 const $ = id => document.getElementById(id);
+const themeToggle=$('theme-toggle');
+function setTheme(next,save=true){
+  const theme=next==='dark'?'dark':'light';
+  document.documentElement.dataset.theme=theme;
+  if(themeToggle) {
+    themeToggle.setAttribute('aria-label',theme==='dark'?'Switch to light mode':'Switch to dark mode');
+    themeToggle.setAttribute('title',theme==='dark'?'Switch to light mode':'Switch to dark mode');
+    themeToggle.setAttribute('aria-pressed',String(theme==='dark'));
+    const themeLabel=themeToggle.querySelector('.theme-label');
+    if(themeLabel)themeLabel.textContent=theme==='dark'?'Light mode':'Dark mode';
+  }
+  const meta=$('theme-meta');if(meta)meta.setAttribute('content',theme==='dark'?'#121212':'#ffffff');
+  if(save){try{localStorage.setItem('converter-theme',theme)}catch(e){}}
+}
+setTheme(document.documentElement.dataset.theme||'light',false);
+themeToggle?.addEventListener('click',()=>setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'));
+const themeMedia=matchMedia('(prefers-color-scheme: dark)');
+themeMedia.addEventListener?.('change',event=>{
+  try{if(localStorage.getItem('converter-theme'))return}catch(e){}
+  setTheme(event.matches?'dark':'light',false);
+});
+
 const formats = {
   image:{title:'Image converter',subtitle:'Crop, resize and convert your images with control over file size.',accept:'.jpg,.jpeg,.png,.webp,.bmp,.tif,.tiff,.gif',hint:'JPG, PNG, WEBP, GIF, BMP, TIFF · Maximum 80 MB',outputs:['jpg','png','webp','bmp','tiff'],note:'Set the maximum size in KB or MB. Exact dimensions are preserved for Crop, Pad and Stretch; Fit stays within your bounds.'},
   video:{title:'Video converter',subtitle:'Convert video formats and reduce download size.',accept:'.mp4,.webm,.mov,.mkv,.avi',hint:'MP4, WEBM, MOV, MKV, AVI · Maximum 80 MB',outputs:['mp4','webm'],note:'Very low size targets can fail for long videos. Processing may take longer than image conversion.'},
