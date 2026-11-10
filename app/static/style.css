@@ -107,3 +107,6 @@
 .seo-more-tools h2{font-size:28px}
 :root[data-theme="dark"] .seo-tool-card{background:var(--soft);border-color:var(--line)}
 @media(max-width:720px){.seo-tool-page{padding:43px 0 60px}.seo-tool-card{padding:21px}.seo-tool-page h1{font-size:36px}}
+
+/* Keep the theme switch visible without horizontal overflow on narrow phones */
+@media(max-width:600px){.site-header .nav-cta{display:none}.site-header .header-inner{gap:10px}.site-header .brand{min-width:0}}
