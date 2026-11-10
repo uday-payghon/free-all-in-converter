@@ -56,3 +56,9 @@ Pinned Playwright 1.58.2 Noble container, against the 512 MiB production contain
 CI browser execution now uses the same pinned Playwright container. A superseded GitHub run was cancelled while its native browser step remained pending.
 
 GitHub run 42775303573 passed **106 backend tests and 28 browser tests (2 expected skips)** plus dependency audit, production Docker and real HTTP smoke. The run failed only while uploading a Firefox download artifact created with root-only permissions inside the browser container. Added a narrowly scoped readability step for synthetic test output directories before artifact upload.
+
+## Final remote CI: passed
+
+[GitHub Actions run 42775877751](https://github.com/uday-payghon/free-all-in-converter/actions/runs/42775877751) completed **successfully** on 10 November 2026. Backend tests, runtime dependency audit, production Docker build, real HTTP conversion smoke, Chromium/Firefox/WebKit browser and accessibility tests, and browser artifact upload all passed.
+
+Student-domain redemption remains pending: browser access is disabled in Work settings; no student eligibility or registrar session is available to verify or redeem. Enable browser access and sign in to GitHub Education and the chosen registrar to continue. No student offer, paid subscription, renewal commitment or custom domain was activated. The public Render HTTPS hostname is verified and usable.
