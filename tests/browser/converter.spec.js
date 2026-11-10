@@ -144,7 +144,7 @@ test('developer profile stays visible and hero preview does not clip at right ed
   await expect(page.locator('.developer-credit')).toContainText('Uday Payghon');
   const contact=page.locator('.developer-profile .developer-contact');
   await expect(contact).toBeVisible();
-  await expect(contact).toHaveAttribute('href', /linkedin\\.com\\/in\\/cyber-uday/);
+  await expect(contact).toHaveAttribute('href', 'https://www.linkedin.com/in/cyber-uday/');
   for(const width of [320,390,600,768,1024,1280,1440]){
     await page.setViewportSize({width,height:900});
     const positions=await page.evaluate(()=>{
