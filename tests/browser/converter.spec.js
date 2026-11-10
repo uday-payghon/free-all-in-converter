@@ -212,7 +212,7 @@ test('mobile-first experience credits both developers and keeps tools usable',as
   await chooseImage(page);
   await expect(page.locator('#crop-trigger-row')).toBeVisible();
   await page.locator('#target').fill('200');
-  await expect(page.locator('#summary-target')).toContainText('200');
+  await expect(page.locator('#summary-size')).toContainText('200');
   if(browserName==='chromium')await page.screenshot({path:testInfo.outputPath('mobile-image-workspace.png'),fullPage:true});
   await audit(page);
   await page.locator('#theme-toggle').click();
