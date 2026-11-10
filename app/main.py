@@ -7,11 +7,12 @@ import time
 import tempfile
 from pathlib import Path
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile, Request
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse, PlainTextResponse, Response
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.gzip import GZipMiddleware
 from starlette.datastructures import UploadFile as StarletteUploadFile
 from .security import RequestGuards
+from .seo import TOOLS, tool_page, sitemap, robots
 from .jobs import run_job
 from .processor import (AUDIO_FORMATS, DOC_FORMATS, IMAGE_FORMATS, IMAGE_OUTPUTS,
                         VIDEO_FORMATS, ConversionError)
@@ -49,6 +50,20 @@ app.mount('/static', StaticFiles(directory=ROOT / 'static'), name='static')
 @app.get('/', response_class=HTMLResponse)
 async def index():
     return (ROOT / 'static/index.html').read_text(encoding='utf-8')
+
+@app.get('/tools/{slug}', response_class=HTMLResponse)
+async def conversion_tool_page(slug: str):
+    if slug not in TOOLS:
+        raise HTTPException(404, 'Converter page not found.')
+    return tool_page(slug)
+
+@app.get('/sitemap.xml')
+async def sitemap_xml():
+    return Response(sitemap(), media_type='application/xml')
+
+@app.get('/robots.txt')
+async def robots_txt():
+    return PlainTextResponse(robots())
 
 @app.get('/health')
 async def health():

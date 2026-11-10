@@ -1,5 +1,27 @@
 'use strict';
 const $ = id => document.getElementById(id);
+const themeToggle=$('theme-toggle');
+function setTheme(next,save=true){
+  const theme=next==='dark'?'dark':'light';
+  document.documentElement.dataset.theme=theme;
+  if(themeToggle) {
+    themeToggle.setAttribute('aria-label',theme==='dark'?'Switch to light mode':'Switch to dark mode');
+    themeToggle.setAttribute('title',theme==='dark'?'Switch to light mode':'Switch to dark mode');
+    themeToggle.setAttribute('aria-pressed',String(theme==='dark'));
+    const themeLabel=themeToggle.querySelector('.theme-label');
+    if(themeLabel)themeLabel.textContent=theme==='dark'?'Light mode':'Dark mode';
+  }
+  const meta=$('theme-meta');if(meta)meta.setAttribute('content',theme==='dark'?'#121212':'#ffffff');
+  if(save){try{localStorage.setItem('converter-theme',theme)}catch(e){}}
+}
+setTheme(document.documentElement.dataset.theme||'light',false);
+themeToggle?.addEventListener('click',()=>setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'));
+const themeMedia=matchMedia('(prefers-color-scheme: dark)');
+themeMedia.addEventListener?.('change',event=>{
+  try{if(localStorage.getItem('converter-theme'))return}catch(e){}
+  setTheme(event.matches?'dark':'light',false);
+});
+
 const formats = {
   image:{title:'Image converter',subtitle:'Crop, resize and convert your images with control over file size.',accept:'.jpg,.jpeg,.png,.webp,.bmp,.tif,.tiff,.gif',hint:'JPG, PNG, WEBP, GIF, BMP, TIFF · Maximum 80 MB',outputs:['jpg','png','webp','bmp','tiff'],note:'Set the maximum size in KB or MB. Exact dimensions are preserved for Crop, Pad and Stretch; Fit stays within your bounds.'},
   video:{title:'Video converter',subtitle:'Convert video formats and reduce download size.',accept:'.mp4,.webm,.mov,.mkv,.avi',hint:'MP4, WEBM, MOV, MKV, AVI · Maximum 80 MB',outputs:['mp4','webm'],note:'Very low size targets can fail for long videos. Processing may take longer than image conversion.'},
@@ -9,11 +31,13 @@ const formats = {
 };
 let mode=null, previewUrl=null, downloadUrl=null, sourceInfo=null, cropSelection=null, lastFocus=null;
 let drawnCrop=null, pointerStart=null, busy=false, uploadLimit=80*1024*1024, maxImagePixels=16000000;
-const capabilitiesReady=fetch('/api/capabilities').then(r=>{if(!r.ok)throw new Error();return r.json()}).then(c=>{uploadLimit=c.max_upload_mb*1024*1024;maxImagePixels=c.max_image_pixels;Object.values(formats).forEach(f=>f.hint=f.hint.replace('80 MB',`${c.max_upload_mb} MB`));if(mode)$('file-hint').textContent=formats[mode].hint}).catch(()=>{});
+const dismissSuccess=()=>{$('success-toast').hidden=true};
+$('dismiss-success').addEventListener('click',dismissSuccess);
+const capabilitiesReady=fetch('/api/capabilities').then(r=>{if(!r.ok)throw new Error();return r.json()}).then(c=>{uploadLimit=c.max_upload_mb*1024*1024;maxImagePixels=c.max_image_pixels;Object.values(formats).forEach(f=>f.hint=f.hint.replace('80 MB',`${c.max_upload_mb} MB`));if(mode)$('file-hint').textContent=formats[mode].hint;const cap=$('video-capacity-note');if(cap)cap.textContent=c.max_upload_mb>=500?'This server accepts uploads up to 500 MB. Large files may still take significant time.':`This server currently accepts up to ${c.max_upload_mb} MB per file. 500 MB uploads require upgraded processing and upload infrastructure.`}).catch(()=>{});
 const fileInput=$('file');
 const sizeString=n=>!Number.isFinite(n)?'—':n>=1048576?`${(n/1048576).toFixed(2)} MB`:n>=1024?`${(n/1024).toFixed(1)} KB`:`${n} B`;
 const cleanUrls=()=>{if(previewUrl){URL.revokeObjectURL(previewUrl);previewUrl=null}if(downloadUrl){URL.revokeObjectURL(downloadUrl);downloadUrl=null}};
-const clearResult=()=>{$('status').textContent='';$('status').classList.remove('error');$('result-panel').hidden=true;if(downloadUrl){URL.revokeObjectURL(downloadUrl);downloadUrl=null}};
+const clearResult=()=>{dismissSuccess();$('status').textContent='';$('status').classList.remove('error');$('result-panel').hidden=true;if(downloadUrl){URL.revokeObjectURL(downloadUrl);downloadUrl=null}};
 function modalBackground(inert){document.querySelectorAll('body > header, body > main, body > footer, .skip-link').forEach(el=>el.inert=inert);document.body.style.overflow=inert?'hidden':''}
 function showPicker(){if(busy)return;lastFocus=document.activeElement;$('category-modal').hidden=false;modalBackground(true);$('category-modal').querySelector('button[data-close-picker]').focus()}
 function hidePicker(){if($('category-modal').hidden)return;$('category-modal').hidden=true;modalBackground(false);lastFocus?.focus()}
@@ -42,11 +66,21 @@ function setMode(next){
   if(next==='pdf')fmt.value='docx';
   $('note').textContent=formats[next].note;$('image-options').hidden=next!=='image';$('video-options').hidden=next!=='video';
   document.querySelectorAll('#image-options input, #image-options select').forEach(el=>el.disabled=next!=='image');$('video-width').disabled=next!=='video';
-  $('file-preview').hidden=true;$('crop-trigger-row').hidden=true;$('width').value='';$('height').value='';$('target').value='';$('video-width').value='';$('lock-ratio').checked=true;$('resize-mode').value='contain';
+  $('file-preview').hidden=true;$('crop-trigger-row').hidden=true;$('size-goal').value='limit';$('width').value='';$('height').value='';$('target').value='';$('video-width').value='';$('lock-ratio').checked=true;$('resize-mode').value='contain';
   document.querySelectorAll('[data-mode]').forEach(el=>el.classList.toggle('active',el.dataset.mode===next));
   refreshSummary();$('workspace-title').focus({preventScroll:true});$('workspace').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
 }
 document.querySelectorAll('[data-mode]').forEach(el=>el.addEventListener('click',()=>setMode(el.dataset.mode)));
+const deepLink=new URLSearchParams(location.search);
+const toolFromLink=deepLink.get('tool'), formatFromLink=deepLink.get('format');
+if(Object.prototype.hasOwnProperty.call(formats,toolFromLink)){
+  setMode(toolFromLink);
+  if(formats[toolFromLink].outputs.includes(formatFromLink)){
+    $('format').value=formatFromLink;
+    refreshSummary();
+  }
+}
+
 function chosenFile(){return fileInput.files?.[0]||null}
 function refreshSummary(){
   const file=chosenFile();
@@ -89,7 +123,8 @@ $('clear-file').addEventListener('click',()=>{fileInput.value='';showFile()});
 const drop=$('drop');['dragenter','dragover'].forEach(name=>drop.addEventListener(name,e=>{e.preventDefault();drop.classList.add('drag')}));['dragleave','drop'].forEach(name=>drop.addEventListener(name,e=>{e.preventDefault();drop.classList.remove('drag')}));
 drop.addEventListener('drop',e=>{if(busy)return;if(e.dataTransfer?.files?.length>1){$('status').textContent='Choose one file at a time.';return}if(e.dataTransfer?.files?.length){const dt=new DataTransfer();dt.items.add(e.dataTransfer.files[0]);fileInput.files=dt.files;showFile()}});
 $('format').addEventListener('change',()=>{clearResult();refreshSummary()});
-['target','size-unit','video-width','resize-mode'].forEach(id=>$(id).addEventListener('input',()=>{clearResult();refreshSummary()}));
+['target','size-unit','video-width','resize-mode','size-goal'].forEach(id=>$(id).addEventListener('input',()=>{clearResult();refreshSummary()}));
+$('size-goal').addEventListener('change',()=>{$('size-goal-hint').textContent=$('size-goal').value==='close'?'Best effort: the converter aims for good quality under your cap; exact byte-for-byte sizing cannot be guaranteed.':'The result will stay within your chosen limit where technically possible. If not, we’ll explain why.';});
 function selectedRatio(){return cropSelection?cropSelection.width/cropSelection.height:sourceInfo?sourceInfo.width/sourceInfo.height:null}
 function dimensionChange(changed){
   if($('lock-ratio').checked&&selectedRatio()){
@@ -171,7 +206,10 @@ $('convert-form').addEventListener('submit',async e=>{
     const name=(selected.name.replace(/\.[^.]+$/,'').replace(/[^a-zA-Z0-9_-]/g,'_').slice(0,65)||'file')+'_converted.'+requestedFormat;
     $('download').href=downloadUrl;$('download').download=name;
     $('result-details').textContent=`${name} · ${sizeString(blob.size)}`;
-    $('result-panel').hidden=false;state.textContent='Conversion complete. Your download is ready.';$('download').focus();
+    $('result-panel').hidden=false;state.textContent='Conversion complete. Your download is ready.';
+     $('toast-details').textContent=`${sizeString(blob.size)} · ${requestedFormat.toUpperCase()} · ready to download`;
+     $('toast-download').href=downloadUrl;$('toast-download').download=name;$('success-toast').hidden=false;
+     $('download').focus();
     if(mode==='image'){const resultImage=new Image();resultImage.onload=()=>{$('result-details').textContent=`${resultImage.naturalWidth} × ${resultImage.naturalHeight} px · ${sizeString(blob.size)}`};resultImage.src=downloadUrl}
   }catch(error){state.textContent=error?.message||'Unable to convert this file.';state.classList.add('error')}
   finally{setBusy(false);btn.innerHTML='Convert file <span aria-hidden="true">↗</span>'}
