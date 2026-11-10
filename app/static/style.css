@@ -132,7 +132,7 @@
 .hero-stat-card strong{font:800 clamp(30px,3.4vw,46px)/1.18 Manrope,Arial,sans-serif;letter-spacing:-1.9px;color:#171c29}
 .hero-stat-card .stat-accent{color:#d82330}
 .hero-stat-card>span{font-size:13px;font-weight:800;color:#414a58;margin-top:5px}
-.hero-stat-card small{font-size:11px;color:#78808c;line-height:1.5;margin-top:4px}
+.hero-stat-card small{font-size:11px;color:#626b78;line-height:1.5;margin-top:4px}
 :root[data-theme="dark"] .hero-left>p{color:#c4c4cd}
 :root[data-theme="dark"] .hero-kicker{background:#352126;border-color:#61333d;color:#ffa4aa}
 :root[data-theme="dark"] .hero-kicker-dot{background:#ff5e6a;box-shadow:0 0 0 3px #5c2f39}
