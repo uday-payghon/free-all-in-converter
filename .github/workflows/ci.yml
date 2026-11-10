@@ -31,8 +31,7 @@ jobs:
         run: |
           docker run --rm --user root -v "$PWD/artifacts:/fixtures" converter:test python scripts/fixtures.py /fixtures/fixtures
           npm ci
-          npx playwright install --with-deps chromium firefox webkit
-          npm run test:browser
+          docker run --rm --network host --ipc=host -v "$PWD:/work" -w /work mcr.microsoft.com/playwright:v1.58.2-noble npx playwright test
       - uses: actions/upload-artifact@v4
         if: always()
         with:
