@@ -1,3 +1,4 @@
+from html import escape
 from fastapi.testclient import TestClient
 from app.main import app
 from app.seo import TOOLS, ORIGIN
@@ -8,7 +9,7 @@ def test_all_tools_have_distinct_indexable_pages():
     for slug, (title, _category, _description, _instructions, _format) in TOOLS.items():
         response = client.get('/tools/' + slug)
         assert response.status_code == 200, slug
-        assert '<h1>' + title + '</h1>' in response.text
+        assert '<h1>' + escape(title) + '</h1>' in response.text
         assert f'<link rel="canonical" href="{ORIGIN}/tools/{slug}">' in response.text
         assert 'application/ld+json' in response.text
         assert 'Start converting' in response.text
