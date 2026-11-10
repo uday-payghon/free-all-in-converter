@@ -37,7 +37,7 @@ def tool_page(slug):
 <meta property="og:url" content="{url}"><meta name="twitter:card" content="summary">
 <title>{title} | Free All-in Converter</title><script type="application/ld+json">{metadata}</script>
 <link rel="icon" href="/static/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/static/style.css">
-<script>try{{const t=localStorage.getItem("converter-theme");document.documentElement.dataset.theme=t==="dark"||t==="light"?t:(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")}}catch(e){{document.documentElement.dataset.theme="light"}}</script>
+<script src="/static/theme-init.js"></script>
 </head><body><header class="site-header"><div class="header-inner page-width"><a class="brand" href="/">free<span class="brand-emphasis">convert</span></a><nav class="desktop-nav" aria-label="Primary"><a href="/#tools">All tools</a><a href="/#questions">FAQ</a></nav><a class="nav-cta" href="/?tool={category}&format={fmt}#workspace">Open converter ↗</a></div></header>
 <main class="seo-tool-page page-width"><span class="section-label">FREE ONLINE CONVERTER</span>
 <h1>{title}</h1><p class="seo-lead">{description}</p><section class="seo-tool-card"><h2>How to use this converter</h2><p>{instructions}</p><a class="primary-btn" href="/?tool={category}&format={fmt}#workspace">Start converting ↗</a><p class="seo-tool-note">No registration, no watermark added, and direct download. Output-size targets are maximum limits, not guaranteed exact byte counts.</p></section>
