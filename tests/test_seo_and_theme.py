@@ -37,7 +37,10 @@ def test_homepage_theme_metadata_sponsor_clarity():
     assert response.status_code == 200
     assert 'id="theme-toggle"' in response.text
     assert 'id="success-toast"' in response.text
-    assert 'Mr. Uday Payghon' in response.text
+    assert 'Uday Payghon' in response.text
+    assert 'Manjushree Dighe' in response.text
+    assert '150' in response.text
+    assert 'Friends who have tried the tool' in response.text
     assert 'No partner endorsement is claimed' in response.text
     assert '100K+' not in response.text
     assert 'Google Partner' not in response.text
