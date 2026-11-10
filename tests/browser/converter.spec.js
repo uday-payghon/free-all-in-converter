@@ -101,8 +101,9 @@ test('scanned PDF has explicit OCR message',async({page})=>{
 
 test('mobile touch crop',async({browser,browserName})=>{
   test.skip(browserName!=='chromium','CDP touch drag is Chromium-specific; pointer crop runs in all engines.');
-  const context=await browser.newContext({viewport:{width:390,height:844},hasTouch:true,isMobile:true});
+  const context=await browser.newContext({viewport:{width:390,height:844},hasTouch:true,isMobile:true,reducedMotion:'reduce'});
   const page=await context.newPage();await page.goto(process.env.BASE_URL||'http://127.0.0.1:10000');await images(page);await page.locator('#open-crop').click();
+  await page.locator('#crop-image').evaluate(async img=>{await img.decode();await new Promise(requestAnimationFrame)});
   const box=await page.locator('#crop-image').boundingBox();const session=await context.newCDPSession(page);
   await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:box.x+box.width*.1,y:box.y+box.height*.1}]});
   for(let i=1;i<=5;i++){
@@ -110,5 +111,8 @@ test('mobile touch crop',async({browser,browserName})=>{
     await page.evaluate(()=>new Promise(requestAnimationFrame));
   }
   await session.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+  await expect(page.locator('#crop-coordinates')).toContainText('Crop area:');
+  // Allow Chromium to finish classifying the raw CDP drag before a separate tap.
+  await page.waitForTimeout(400);
   await page.locator('#apply-crop').tap();await expect(page.locator('#crop-summary')).toHaveText(/Crop: \d+ × \d+ px/);const cropText=await page.locator('#crop-summary').textContent();const cropSize=cropText.match(/(\d+) × (\d+)/);expect(cropSize).toBeTruthy();expect(Math.abs(Number(cropSize[1])-200)).toBeLessThanOrEqual(1);expect(Math.abs(Number(cropSize[2])-150)).toBeLessThanOrEqual(1);await context.close();
 });

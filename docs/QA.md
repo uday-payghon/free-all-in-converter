@@ -33,3 +33,14 @@ Findings: upload bound runs after multipart parsing; unbounded waiting jobs; ext
 ## Deployment
 
 User authorized new public GitHub repository and Render Free deployment to Uday's workspace on 10 November 2026. Publication and live deployment verification are in progress. Student eligibility and domain redemption are not yet verified.
+
+## Public deployment verification
+
+10 November 2026: initial source commit e11faf0425e37bb39369c1297629df371f3b9c10 deployed through Render MCP to Uday's confirmed workspace, Free plan, Singapore. Service srv-dbpc560m7kps73agkah0, deploy dep-dbpc56gm7kps73agkbsg reached `live`.
+
+Verified URL: https://free-all-in-converter.onrender.com
+Repository: https://github.com/uday-payghon/free-all-in-converter
+
+Public smoke gate passed: PNG→JPG 564 bytes; PDF→DOCX 36,597 bytes; PDF→PDF 1,375 bytes; DOCX→PDF 12,090 bytes; MP4→MP3 21,986 bytes; MP4→WebM 16,607 bytes. Output parsers/decoders, attachment headers, actual bytes, homepage, capabilities and malformed-file error all passed with TLS verification enabled.
+
+Initial remote CI passed backend, dependency audit, production Docker build and HTTP smoke but failed browser installation because `ubuntu-latest` resolved to Ubuntu 26.04 unsupported by this Playwright version. Pinned CI to Ubuntu 24.04. Raw CDP touch drag followed immediately by a tap suppressed Chromium's click; added image decode wait and a 400 ms gesture boundary. Three repeated touch tests then passed.

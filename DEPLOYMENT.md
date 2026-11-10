@@ -2,7 +2,11 @@
 
 ## Actual status (10 November 2026)
 
-Local Docker build and real HTTP smoke tests have succeeded. No GitHub repository has been created or pushed, no Render service has been deployed by this task, and no public HTTPS URL or custom domain has been verified. GitHub CLI is authenticated as `uday-payghon`; publication awaits the repository authorization requested by the owner. The Render plugin was found but is not connected. Do not mistake the existing brand text `freeconvert.tools` for an owned or deployed domain.
+Deployed and verified at **https://free-all-in-converter.onrender.com**. Source: https://github.com/uday-payghon/free-all-in-converter. Render Free service `srv-dbpc560m7kps73agkah0` runs in Uday's workspace, Singapore. Initial deploy `dep-dbpc56gm7kps73agkbsg` became live on 10 November 2026. All six public HTTPS conversion smoke tests passed, including readable Office/PDF/media downloads and error handling.
+
+No custom domain has been registered or configured, and no Student Developer Pack benefit has been redeemed. Student verification and registrar access remain unverified. Render Free hosting and its included HTTPS hostname do not require the Student Pack. Browser access for redemption is disabled in this session's Work settings.
+
+The service was created directly through Render MCP. Its current health check uses Render's default TCP check; `/health` is independently verified by HTTP. The supplied Blueprint specifies `/health` for future Blueprint deployments. The MCP creation tool does not expose HTTP health-check configuration.
 
 ## Reproducible release checks
 

@@ -109,7 +109,7 @@ White canvas, #dc2228 accent red, near-black text; no neon AI design language, n
 
 ## Audited release (10 November 2026)
 
-See [QA.md](docs/QA.md) for actual verification results and [SECURITY.md](docs/SECURITY.md) for implemented safeguards and remaining public-production work. **No public deployment is recorded yet.** A Docker build or a localhost URL is not a Render deployment.
+See [QA.md](docs/QA.md) for actual verification results and [SECURITY.md](docs/SECURITY.md) for implemented safeguards and remaining public-production work. **Live:** [free-all-in-converter.onrender.com](https://free-all-in-converter.onrender.com). Six real public HTTPS conversion smoke tests passed. Source: [GitHub](https://github.com/uday-payghon/free-all-in-converter). Custom student domain redemption is pending.
 
 The release keeps the existing white/red/black UI and all five conversion categories. Improvements include keyboard-accessible dialogs and numeric crop editing, focus restoration, visible control focus, corrected contrast, dynamic upload limits, settings locked during conversion, exact 1 KB targets, safe errors, bounded requests and disposable conversion workers. Fonts use local system fallbacks; the browser makes no third-party requests.
 
