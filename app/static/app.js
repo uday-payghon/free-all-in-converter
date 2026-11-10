@@ -71,6 +71,16 @@ function setMode(next){
   refreshSummary();$('workspace-title').focus({preventScroll:true});$('workspace').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
 }
 document.querySelectorAll('[data-mode]').forEach(el=>el.addEventListener('click',()=>setMode(el.dataset.mode)));
+const deepLink=new URLSearchParams(location.search);
+const toolFromLink=deepLink.get('tool'), formatFromLink=deepLink.get('format');
+if(Object.prototype.hasOwnProperty.call(formats,toolFromLink)){
+  setMode(toolFromLink);
+  if(formats[toolFromLink].outputs.includes(formatFromLink)){
+    $('format').value=formatFromLink;
+    refreshSummary();
+  }
+}
+
 function chosenFile(){return fileInput.files?.[0]||null}
 function refreshSummary(){
   const file=chosenFile();
