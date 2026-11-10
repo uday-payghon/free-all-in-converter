@@ -32,6 +32,12 @@ jobs:
           docker run --rm --user root -v "$PWD/artifacts:/fixtures" converter:test python scripts/fixtures.py /fixtures/fixtures
           npm ci
           docker run --rm --network host --ipc=host -v "$PWD:/work" -w /work mcr.microsoft.com/playwright:v1.58.2-noble npx playwright test
+      - name: Make container test artifacts readable
+        if: always()
+        run: |
+          for directory in playwright-report test-results; do
+            if [ -d "$directory" ]; then sudo chmod -R a+rX "$directory"; fi
+          done
       - uses: actions/upload-artifact@v4
         if: always()
         with:

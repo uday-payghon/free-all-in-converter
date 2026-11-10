@@ -15,9 +15,9 @@ Findings: upload bound runs after multipart parsing; unbounded waiting jobs; ext
 - [x] Test Chromium, Firefox and WebKit, downloads, errors and accessibility.
 - [x] Build and smoke-test non-root production Docker image with constrained resources.
 - [x] Record dependency audit and residual security/format limitations.
-- [ ] Prepare GitHub/Render package; publish only when repository creation is authorized and Render access is available.
-- [ ] Verify public HTTPS and live conversions before marking deployed.
-- [ ] Document current student-domain redemption and DNS steps.
+- [x] Publish authorized GitHub repository and Render Free service.
+- [x] Verify public HTTPS and live conversions before marking deployed.
+- [x] Document current student-domain redemption and DNS steps; actual redemption remains pending access.
 
 ## Verified local release results
 
@@ -48,3 +48,11 @@ Initial remote CI passed backend, dependency audit, production Docker build and 
 Public Chromium regression: **10/10 passed in 1.0 minute**, covering all five categories, attachment downloads, image pixel checks, keyboard crop, pointer crop, mobile touch crop, size impossibility, scanned-PDF OCR message, category focus trap, responsive widths and axe checks. The final local touch gesture test also passed 3/3 consecutive runs.
 
 Remote browser CI passed 27 checks but exposed suppression of the Apply tap when mixing raw CDP touch IDs with Playwright's separate touchscreen controller. The touch test now verifies the actual touch rectangle, then activates Apply through the keyboard. Pointer and ordinary UI activation remain covered independently. The fix changes only the test driver, not deployed conversion behavior.
+
+## Final browser result
+
+Pinned Playwright 1.58.2 Noble container, against the 512 MiB production container: **28 passed, 2 expected skips, 1.7 minutes**. Chromium/Firefox/WebKit all passed category dialogs, accessible forms, crop pointer mapping, keyboard crop, ratio controls, real downloads for every category, impossible-size errors and OCR messages. Chromium raw touch selection followed by keyboard Apply passed. Only the CDP-specific touch test is skipped in Firefox/WebKit.
+
+CI browser execution now uses the same pinned Playwright container. A superseded GitHub run was cancelled while its native browser step remained pending.
+
+GitHub run 42775303573 passed **106 backend tests and 28 browser tests (2 expected skips)** plus dependency audit, production Docker and real HTTP smoke. The run failed only while uploading a Firefox download artifact created with root-only permissions inside the browser container. Added a narrowly scoped readability step for synthetic test output directories before artifact upload.
